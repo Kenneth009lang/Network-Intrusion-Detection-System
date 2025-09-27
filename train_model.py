@@ -1,17 +1,3 @@
-"""
-train_model.py
--------------------------------------
-Train CNN and CNN-BiLSTM models on the CICIDS2017 dataset.
-
-✅ Reads CSV from local 'data/' folder
-✅ Preprocesses data (encoding, scaling, feature selection)
-✅ Trains both CNN and CNN-BiLSTM
-✅ Saves model artifacts (optional if you already have them)
-✅ GitHub-ready: documented, readable, reproducible
-
-Author: Your Name
-"""
-
 import pandas as pd
 import numpy as np
 import os
