@@ -182,6 +182,78 @@ def load_and_clean_data(uploaded_file):
     st.session_state.total_valid_rows = df_sel_all.shape[0]
     return df, df_sel_all 
 # End of adapted code
+
+# --- THREAT RESPONSE LOGIC START ---
+
+def restrict_targeted_services(attack_df):
+    """
+    Simulated function to initiate a security response, targeting services/ports
+    identified by the Destination Port ('Dst Port'). The response focuses on 
+    protecting the targeted service, suitable for anonymous datasets.
+    """
+    
+    identifier_column = 'Dst Port'
+    
+    if identifier_column not in attack_df.columns:
+        st.error(f"Cannot initiate targeted response: The '{identifier_column}' column is missing from the data frame.")
+        return False
+        
+    # Get unique destination ports being targeted by attacks
+    targeted_ports = attack_df[attack_df['Prediction'] != 'Normal'][identifier_column].unique()
+    
+    if len(targeted_ports) == 0:
+        st.info("No attack-related ports found to restrict.")
+        return True
+
+    st.warning(f"Simulating request to **temporarily restrict traffic** to **{len(targeted_ports)}** unique targeted service port(s).")
+    
+    # List the targeted attacks for the SOC summary
+    attack_summary = attack_df.groupby('Dst Port')['Prediction'].apply(lambda x: ', '.join(x.unique())).to_dict()
+    
+    # Placeholder for API call or system command execution
+    # Example: firewall_api.rate_limit_port(targeted_ports, duration='5m')
+    
+    # Simulate a delay
+    time.sleep(1.5)
+    
+    st.success(f"**Response Action Completed:** Traffic restricted (simulated) for ports: **{', '.join(map(str, targeted_ports[:5]))}**...")
+    
+    # Display a detailed action log
+    for port, attacks in attack_summary.items():
+        st.markdown(f"- Port `{port}` restricted due to: *{attacks}*")
+    
+    st.markdown("**(This action protects the destination service from being overwhelmed or successfully exploited.)**")
+    
+    return True
+
+def initiate_critical_alert(attack_df):
+    """
+    Fallback function: Creates a general critical alert when no unique network
+    identifier (like IP or Dst Port) is available for a targeted response.
+    """
+    attack_counts = attack_df['Prediction'].value_counts()
+    num_attacks = attack_df.shape[0]
+    
+    if num_attacks == 0:
+        return True
+
+    st.error(f"🚨 **CRITICAL ALERT INITIATED!**")
+    st.warning(f"Simulating creation of a high-priority incident ticket for {num_attacks} malicious flows.")
+    
+    # Prepare a summary of the incident for the SOC team
+    incident_summary = {
+        "Unique Attack Types": attack_counts.index.tolist(),
+    }
+    
+    time.sleep(1.5)
+    
+    st.success(f"**Response Action Completed:** Incident created and security team notified.")
+    st.markdown(f"**Details logged:** Detected intrusion types: **{', '.join(incident_summary['Unique Attack Types'])}**")
+    
+    return True
+
+# --- THREAT RESPONSE LOGIC END ---
+
 # Main App UI
 # Code adapted from Streamlit documentation (Streamlit, 2023)
 st.title("Network Intrusion Detection System — Single-Batch Analysis")
@@ -231,7 +303,25 @@ st.session_state.batch_offset = end_idx
 # End of adapted code
 # Results Display
 # Code adapted from Streamlit documentation (Streamlit, 2023)
-st.subheader(" Batch Results")
+st.subheader(" Batch Results and Response")
+
+# Filter for detected intrusions
+attack_results = results_df[results_df['Prediction'] != 'Normal']
+
+if not attack_results.empty:
+    st.error(f"🚨 **{len(attack_results)}** potential intrusions detected in this batch!")
+    
+    # Check for the Dst Port column for a targeted response
+    if 'Dst Port' in results_df.columns:
+        if st.button("🔥 **Execute Response:** Restrict Traffic to Targeted Services"):
+            restrict_targeted_services(attack_results)
+    else:
+        # If Dst Port is missing, initiate a general alert (fallback)
+        if st.button("🔥 **Execute Response:** Initiate General Critical Alert (No Port ID)"):
+            initiate_critical_alert(attack_results) 
+    
+    st.markdown("---") # Separator after the response section
+
 st.dataframe(results_df.head(20))
 st.write(f"Showing {len(results_df)} rows in this batch.")
 # End of adapted code
