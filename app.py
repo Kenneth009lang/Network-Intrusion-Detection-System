@@ -22,7 +22,7 @@ st.set_page_config(page_title="Intrusion Detection System", layout="wide")
 # End of adapted code
 
 #Constants
-BATCH_SIZE = 100000 
+BATCH_SIZE = 100000
 MAX_ROWS_FOR_EXPLANATION = 50 # Hard limit for batch export
 #Session State Initialization
 # Code adapted from Streamlit  (Streamlit, 2023)
@@ -55,9 +55,8 @@ def clear_cache():
 with st.sidebar:
     st.button("Clear Cache & Reset Data", on_click=clear_cache)
     st.markdown("---")
-    st.write("If you encounter errors after uploading a new file, try clearing the cache.")
+    st.write("clear cache when you are heving errors")
 # End of adapted code
-# Load resources (model, scaler, encoder, features)
 # Code adapted from TensorFlow (TensorFlow, 2023) 
 # and Scikit-learn (Pedregosa et al., 2011)
 @st.cache_resource(show_spinner="Loading essential model files...")
@@ -71,11 +70,11 @@ def load_resources():
         with open('selected_features.txt', 'r') as f:
             selected_features = [line.strip() for line in f.readlines()]
         if not hasattr(label_encoder, 'inverse_transform'):
-            raise TypeError("Loaded label_encoder object does not have the 'inverse_transform' method.")
+            raise TypeError("Loaded label_encoder object does not have inverse_transform.")
             
         return model, scaler, label_encoder, selected_features
     except FileNotFoundError as e:
-        st.error(f"Missing required file: {e}")
+        st.error(f"Missing file: {e}")
         st.stop()
     except TypeError as e:
         st.error(f"Resource Loading Error: {e}")
@@ -94,7 +93,7 @@ def predict_2d_to_3d(x_2d):
 # End of adapted code
 # Explainers Caching
 # Code adapted from SHAP (Lundberg & Lee, 2017)
-@st.cache_resource(show_spinner="Preparing SHAP explainer...")
+@st.cache_resource(show_spinner="Loading SHAP explainer...")
 def get_shap_explainer(data, labels):
     BACKGROUND_SIZE = 50 
     rng = np.random.default_rng(seed=42)
@@ -107,7 +106,7 @@ def get_shap_explainer(data, labels):
     return shap.KernelExplainer(predict_2d_to_3d, background)
 # End of adapted code
 # Code adapted from Ribeiro et al. (2016)
-@st.cache_resource(show_spinner="Preparing LIME explainer...")
+@st.cache_resource(show_spinner="Loading LIME explainer...")
 def get_lime_explainer(data, feature_names, class_names):
     return LimeTabularExplainer(
         data,
