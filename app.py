@@ -1,6 +1,6 @@
 # app.py
 # Imports
-# Code adapted from Python official documentation (Van Rossum & Drake, 2009)
+# Code adapted from Python official (Van Rossum & Drake, 2009)
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -17,7 +17,7 @@ import os
 import time
 # End of adapted code
 # Configuration
-# Code adapted from Streamlit documentation (Streamlit, 2023)
+# Code adapted from Streamlit (Streamlit, 2023)
 st.set_page_config(page_title="Intrusion Detection System", layout="wide")
 # End of adapted code
 
@@ -25,7 +25,7 @@ st.set_page_config(page_title="Intrusion Detection System", layout="wide")
 BATCH_SIZE = 100000 
 MAX_ROWS_FOR_EXPLANATION = 50 # Hard limit for batch export
 #Session State Initialization
-# Code adapted from Streamlit documentation (Streamlit, 2023)
+# Code adapted from Streamlit  (Streamlit, 2023)
 if 'batch_offset' not in st.session_state:
     st.session_state.batch_offset = 0
 if 'current_scaled_data' not in st.session_state:
@@ -42,7 +42,7 @@ if 'total_valid_rows' not in st.session_state:
     st.session_state.total_valid_rows = 0
 # End of adapted code
 # Cache Clearing Function
-# Code adapted from Streamlit documentation (Streamlit, 2023)
+# Code adapted from Streamlit  (Streamlit, 2023)
 def clear_cache():
     st.cache_resource.clear()
     st.cache_data.clear()
@@ -51,15 +51,15 @@ def clear_cache():
              del st.session_state[key]
     st.session_state.batch_offset = 0
 # End of adapted code
-# Code adapted from Streamlit documentation (Streamlit, 2023)
+# Code adapted from Streamlit  (Streamlit, 2023)
 with st.sidebar:
     st.button("Clear Cache & Reset Data", on_click=clear_cache)
     st.markdown("---")
     st.write("If you encounter errors after uploading a new file, try clearing the cache.")
 # End of adapted code
 # Load resources (model, scaler, encoder, features)
-# Code adapted from TensorFlow documentation (TensorFlow, 2023) 
-# and Scikit-learn documentation (Pedregosa et al., 2011)
+# Code adapted from TensorFlow (TensorFlow, 2023) 
+# and Scikit-learn (Pedregosa et al., 2011)
 @st.cache_resource(show_spinner="Loading essential model files...")
 def load_resources():
     try:
@@ -83,7 +83,7 @@ def load_resources():
 # End of adapted code
 model, scaler, label_encoder, selected_features = load_resources()
 # Helper for explainers
-# Code adapted from SHAP documentation (Lundberg & Lee, 2017)
+# Code adapted from SHAP (Lundberg & Lee, 2017)
 def predict_2d_to_3d(x_2d):
     x_arr = np.array(x_2d, dtype=np.float32)
     n_samples = x_arr.shape[0]
@@ -93,7 +93,7 @@ def predict_2d_to_3d(x_2d):
     return preds
 # End of adapted code
 # Explainers Caching
-# Code adapted from SHAP documentation (Lundberg & Lee, 2017)
+# Code adapted from SHAP (Lundberg & Lee, 2017)
 @st.cache_resource(show_spinner="Preparing SHAP explainer...")
 def get_shap_explainer(data, labels):
     BACKGROUND_SIZE = 50 
@@ -117,14 +117,14 @@ def get_lime_explainer(data, feature_names, class_names):
     )
 # End of adapted code
 # Plotting Functions
-# Code adapted from Matplotlib documentation (Hunter, 2007)
+# Code adapted from Matplotlib (Hunter, 2007)
 def fig_to_bytes(fig):
     buf = BytesIO()
     fig.savefig(buf, format='png', bbox_inches='tight')
     buf.seek(0)
     return buf
 # End of adapted code
-# Code adapted from SHAP documentation (Lundberg & Lee, 2017)
+# Code adapted from SHAP (Lundberg & Lee, 2017)
 def plot_shap_local(shap_values, feature_names, title="SHAP Local Explanation"):
     fig, ax = plt.subplots(figsize=(7, 4))
     feat = np.array(feature_names)
@@ -143,7 +143,7 @@ def plot_lime_local(lime_exp, title="LIME Local Explanation"):
     plt.tight_layout()
     return fig
 # End of adapted code
-# Code adapted from SHAP documentation (Lundberg & Lee, 2017)
+# Code adapted from SHAP (Lundberg & Lee, 2017)
 def plot_shap_global(shap_explainer, data, feature_names, n_samples=50):
     fig, ax = plt.subplots(figsize=(10, 6))
     subset_n = min(n_samples, data.shape[0])
@@ -164,7 +164,7 @@ def plot_shap_global(shap_explainer, data, feature_names, n_samples=50):
     return fig
 # End of adapted code
 # Data Loading & Preprocessing
-# Code adapted from Pandas documentation (Pandas Team, 2023)
+# Code adapted from Pandas (Pandas Team, 2023)
 @st.cache_data(show_spinner="Reading and cleaning file structure...")
 def load_and_clean_data(uploaded_file):
     try:
@@ -237,7 +237,7 @@ def initiate_critical_alert(attack_df):
     if num_attacks == 0:
         return True
 
-    st.error(f"🚨 **CRITICAL ALERT INITIATED!**")
+    st.error(f"**CRITICAL ALERT INITIATED!**")
     st.warning(f"Simulating creation of a high-priority incident ticket for {num_attacks} malicious flows.")
     
     # Prepare a summary of the incident for the SOC team
@@ -255,7 +255,7 @@ def initiate_critical_alert(attack_df):
 # --- THREAT RESPONSE LOGIC END ---
 
 # Main App UI
-# Code adapted from Streamlit documentation (Streamlit, 2023)
+# Code adapted from Streamlit (Streamlit, 2023)
 st.title("Network Intrusion Detection System — Single-Batch Analysis")
 st.markdown("Upload a CSV file and process one batch at a time to manage memory.")
 st.markdown("---")
@@ -263,8 +263,8 @@ st.info("Required features: " + ", ".join(selected_features))
 uploaded_file = st.file_uploader("Upload network traffic CSV", type=["csv"])
 # End of adapted code
 # Prediction Batch Processing
-# Code adapted from Scikit-learn documentation (Pedregosa et al., 2011) 
-# and TensorFlow documentation (TensorFlow, 2023)
+# Code adapted from Scikit-learn (Pedregosa et al., 2011) 
+# and TensorFlow (TensorFlow, 2023)
 if uploaded_file is None:
     st.info("Please upload a CSV file to begin.")
     st.session_state.batch_offset = 0
@@ -302,22 +302,22 @@ st.session_state.current_results_df = results_df
 st.session_state.batch_offset = end_idx
 # End of adapted code
 # Results Display
-# Code adapted from Streamlit documentation (Streamlit, 2023)
+# Code adapted from Streamlit (Streamlit, 2023)
 st.subheader(" Batch Results and Response")
 
 # Filter for detected intrusions
 attack_results = results_df[results_df['Prediction'] != 'Normal']
 
 if not attack_results.empty:
-    st.error(f"🚨 **{len(attack_results)}** potential intrusions detected in this batch!")
+    st.error(f"**{len(attack_results)}** potential intrusions detected in this batch!")
     
     # Check for the Dst Port column for a targeted response
     if 'Dst Port' in results_df.columns:
-        if st.button("🔥 **Execute Response:** Restrict Traffic to Targeted Services"):
+        if st.button("**Execute Response:** Restrict Traffic to Targeted Services"):
             restrict_targeted_services(attack_results)
     else:
         # If Dst Port is missing, initiate a general alert (fallback)
-        if st.button("🔥 **Execute Response:** Initiate General Critical Alert (No Port ID)"):
+        if st.button("**Execute Response:** Initiate General Critical Alert (No Port ID)"):
             initiate_critical_alert(attack_results) 
     
     st.markdown("---") # Separator after the response section
@@ -326,7 +326,7 @@ st.dataframe(results_df.head(20))
 st.write(f"Showing {len(results_df)} rows in this batch.")
 # End of adapted code
 # SHAP and LIME Explanations
-# Code adapted from SHAP documentation (Lundberg & Lee, 2017) 
+# Code adapted from SHAP (Lundberg & Lee, 2017) 
 # and Ribeiro et al. (2016)
 if len(results_df) > 0:
     st.subheader(" Model Explanations")
@@ -355,8 +355,8 @@ if len(results_df) > 0:
     st.pyplot(fig_global)
 # End of adapted code
 # Export Results
-# Code adapted from Pandas documentation (Pandas Team, 2023) 
-# and Python zipfile module documentation (Python Software Foundation, 2023)
+# Code adapted from Pandas (Pandas Team, 2023) 
+# and Python zipfile module (Python Software Foundation, 2023)
 st.subheader(" Export Batch Results")
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 csv_filename = f"batch_results_{timestamp}.csv"
@@ -370,7 +370,7 @@ with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
 zip_buffer.seek(0)
 
 st.download_button(
-    label="⬇️ Download Batch Results (ZIP)",
+    label="Download Batch Results (ZIP)",
     data=zip_buffer,
     file_name=zip_filename,
     mime="application/zip"
