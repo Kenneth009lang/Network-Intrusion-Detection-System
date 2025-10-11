@@ -186,9 +186,8 @@ def load_and_clean_data(uploaded_file):
 
 def restrict_targeted_services(attack_df):
     """
-    Simulated function to initiate a security response, targeting services/ports
-    identified by the Destination Port ('Dst Port'). The response focuses on 
-    protecting the targeted service, suitable for anonymous datasets.
+    Simulates functions to start a security response, targeting ports
+    identified by the Destination Port ('Dst Port'). 
     """
     
     identifier_column = 'Dst Port'
@@ -201,10 +200,10 @@ def restrict_targeted_services(attack_df):
     targeted_ports = attack_df[attack_df['Prediction'] != 'Normal'][identifier_column].unique()
     
     if len(targeted_ports) == 0:
-        st.info("No attack-related ports found to restrict.")
+        st.info("No attack-related was ports found.")
         return True
 
-    st.warning(f"Simulating request to **temporarily restrict traffic** to **{len(targeted_ports)}** unique targeted service port(s).")
+    st.warning(f"Simulating request to temporarily restrict traffic to {len(targeted_ports)} unique targeted service port(s).")
     
     # List the targeted attacks for the SOC summary
     attack_summary = attack_df.groupby('Dst Port')['Prediction'].apply(lambda x: ', '.join(x.unique())).to_dict()
@@ -215,19 +214,19 @@ def restrict_targeted_services(attack_df):
     # Simulate a delay
     time.sleep(1.5)
     
-    st.success(f"**Response Action Completed:** Traffic restricted (simulated) for ports: **{', '.join(map(str, targeted_ports[:5]))}**...")
+    st.success(f"Response Action Completed: Traffic restricted (simulated) for ports: {', '.join(map(str, targeted_ports[:5]))}...")
     
     # Display a detailed action log
     for port, attacks in attack_summary.items():
         st.markdown(f"- Port `{port}` restricted due to: *{attacks}*")
     
-    st.markdown("**(This action protects the destination service from being overwhelmed or successfully exploited.)**")
+    st.markdown("( successfully exploited.)")
     
     return True
 
 def initiate_critical_alert(attack_df):
     """
-    Fallback function: Creates a general critical alert when no unique network
+    Fallback function: makes a general alert when no unique network
     identifier (like IP or Dst Port) is available for a targeted response.
     """
     attack_counts = attack_df['Prediction'].value_counts()
@@ -236,7 +235,7 @@ def initiate_critical_alert(attack_df):
     if num_attacks == 0:
         return True
 
-    st.error(f"**CRITICAL ALERT INITIATED!**")
+    st.error(f"ALERT INITIATED!")
     st.warning(f"Simulating creation of a high-priority incident ticket for {num_attacks} malicious flows.")
     
     # Prepare a summary of the incident for the SOC team
@@ -246,8 +245,8 @@ def initiate_critical_alert(attack_df):
     
     time.sleep(1.5)
     
-    st.success(f"**Response Action Completed:** Incident created and security team notified.")
-    st.markdown(f"**Details logged:** Detected intrusion types: **{', '.join(incident_summary['Unique Attack Types'])}**")
+    st.success(f"Response Action Completed: Incident created and security team notified.")
+    st.markdown(f"Details logged: Detected intrusion types: {', '.join(incident_summary['Unique Attack Types'])}")
     
     return True
 
@@ -255,7 +254,7 @@ def initiate_critical_alert(attack_df):
 
 # Main App UI
 # Code adapted from Streamlit (Streamlit, 2023)
-st.title("Network Intrusion Detection System — Single-Batch Analysis")
+st.title("Network Intrusion Detection System")
 st.markdown("Upload a CSV file and process one batch at a time to manage memory.")
 st.markdown("---")
 st.info("Required features: " + ", ".join(selected_features))
@@ -275,7 +274,8 @@ try:
         st.session_state.df_sel_all = df_sel_all
     else:
         df_full = st.session_state.df_full
-        df_sel_all = st.session_state.df_sel_all
+        df_sel_all = st.session_state["df_sel_all"]
+
 except Exception as e:
     st.error(str(e))
     st.stop()
@@ -308,15 +308,15 @@ st.subheader(" Batch Results and Response")
 attack_results = results_df[results_df['Prediction'] != 'Normal']
 
 if not attack_results.empty:
-    st.error(f"**{len(attack_results)}** potential intrusions detected in this batch!")
+    st.error(f"{len(attack_results)} potential intrusions detected in this batch!")
     
     # Check for the Dst Port column for a targeted response
     if 'Dst Port' in results_df.columns:
-        if st.button("**Execute Response:** Restrict Traffic to Targeted Services"):
+        if st.button("Execute Response: Restrict Traffic to Targeted Services"):
             restrict_targeted_services(attack_results)
     else:
         # If Dst Port is missing, initiate a general alert (fallback)
-        if st.button("**Execute Response:** Initiate General Critical Alert (No Port ID)"):
+        if st.button("Execute Response: Initiate General Critical Alert (No Port ID)"):
             initiate_critical_alert(attack_results) 
     
     st.markdown("---") # Separator after the response section
@@ -369,7 +369,7 @@ with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
 zip_buffer.seek(0)
 
 st.download_button(
-    label="Download Batch Results (ZIP)",
+    label="Download Results (ZIP)",
     data=zip_buffer,
     file_name=zip_filename,
     mime="application/zip"
