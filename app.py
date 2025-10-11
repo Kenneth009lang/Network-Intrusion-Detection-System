@@ -19,13 +19,15 @@ import time
 # Configuration
 # Code adapted from Streamlit (Streamlit, 2023)
 st.set_page_config(page_title="Intrusion Detection System", layout="wide")
+
 # End of adapted code
 
 #Constants
 BATCH_SIZE = 100000
-MAX_ROWS_FOR_EXPLANATION = 50 # Hard limit for batch export
+MAX_ROWS_FOR_EXPLANATION = 50
 #Session State Initialization
 # Code adapted from Streamlit  (Streamlit, 2023)
+
 if 'batch_offset' not in st.session_state:
     st.session_state.batch_offset = 0
 if 'current_scaled_data' not in st.session_state:
@@ -40,6 +42,7 @@ if 'df_full' not in st.session_state:
     st.session_state.df_full = None 
 if 'total_valid_rows' not in st.session_state:
     st.session_state.total_valid_rows = 0
+
 # End of adapted code
 # Cache Clearing Function
 # Code adapted from Streamlit  (Streamlit, 2023)
@@ -58,7 +61,6 @@ with st.sidebar:
     st.write("clear cache when you are heving errors")
 # End of adapted code
 # Code adapted from TensorFlow (TensorFlow, 2023) 
-# and Scikit-learn (Pedregosa et al., 2011)
 @st.cache_resource(show_spinner="Loading essential model files...")
 def load_resources():
     try:
@@ -147,7 +149,7 @@ def plot_shap_global(shap_explainer, data, feature_names, n_samples=50):
     fig, ax = plt.subplots(figsize=(10, 6))
     subset_n = min(n_samples, data.shape[0])
     if subset_n == 0:
-        st.warning("Not enough data to generate global plot.")
+        st.warning("Cant generate global plot cause of low data.")
         return plt.figure()
     rng = np.random.default_rng(seed=42)
     global_idx = rng.choice(data.shape[0], size=subset_n, replace=False)
@@ -162,7 +164,7 @@ def plot_shap_global(shap_explainer, data, feature_names, n_samples=50):
     plt.tight_layout()
     return fig
 # End of adapted code
-# Data Loading & Preprocessing
+# Data Loading and Preprocessing
 # Code adapted from Pandas (Pandas Team, 2023)
 @st.cache_data(show_spinner="Reading and cleaning file structure...")
 def load_and_clean_data(uploaded_file):
@@ -182,13 +184,9 @@ def load_and_clean_data(uploaded_file):
     return df, df_sel_all 
 # End of adapted code
 
-# --- THREAT RESPONSE LOGIC START ---
+# --- THREAT RESPONSE ---
 
 def restrict_targeted_services(attack_df):
-    """
-    Simulates functions to start a security response, targeting ports
-    identified by the Destination Port ('Dst Port'). 
-    """
     
     identifier_column = 'Dst Port'
     
@@ -209,7 +207,6 @@ def restrict_targeted_services(attack_df):
     attack_summary = attack_df.groupby('Dst Port')['Prediction'].apply(lambda x: ', '.join(x.unique())).to_dict()
     
     # Placeholder for API call or system command execution
-    # Example: firewall_api.rate_limit_port(targeted_ports, duration='5m')
     
     # Simulate a delay
     time.sleep(1.5)
@@ -225,10 +222,7 @@ def restrict_targeted_services(attack_df):
     return True
 
 def initiate_critical_alert(attack_df):
-    """
-    Fallback function: makes a general alert when no unique network
-    identifier (like IP or Dst Port) is available for a targeted response.
-    """
+
     attack_counts = attack_df['Prediction'].value_counts()
     num_attacks = attack_df.shape[0]
     
@@ -250,7 +244,6 @@ def initiate_critical_alert(attack_df):
     
     return True
 
-# --- THREAT RESPONSE LOGIC END ---
 
 # Main App UI
 # Code adapted from Streamlit (Streamlit, 2023)
@@ -262,7 +255,6 @@ uploaded_file = st.file_uploader("Upload network traffic CSV", type=["csv"])
 # End of adapted code
 # Prediction Batch Processing
 # Code adapted from Scikit-learn (Pedregosa et al., 2011) 
-# and TensorFlow (TensorFlow, 2023)
 if uploaded_file is None:
     st.info("Please upload a CSV file to begin.")
     st.session_state.batch_offset = 0
@@ -325,8 +317,7 @@ st.dataframe(results_df.head(20))
 st.write(f"Showing {len(results_df)} rows in this batch.")
 # End of adapted code
 # SHAP and LIME Explanations
-# Code adapted from SHAP (Lundberg & Lee, 2017) 
-# and Ribeiro et al. (2016)
+# Code adapted from SHAP (Lundberg & Lee, 2017) and Ribeiro et al. (2016)
 if len(results_df) > 0:
     st.subheader(" Model Explanations")
     shap_explainer = get_shap_explainer(st.session_state.current_scaled_data, pred_labels)
@@ -354,8 +345,7 @@ if len(results_df) > 0:
     st.pyplot(fig_global)
 # End of adapted code
 # Export Results
-# Code adapted from Pandas (Pandas Team, 2023) 
-# and Python zipfile module (Python Software Foundation, 2023)
+# Code adapted from Pandas (Pandas Team, 2023) and Python zipfile module (Python Software Foundation, 2023)
 st.subheader(" Export Batch Results")
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 csv_filename = f"batch_results_{timestamp}.csv"
