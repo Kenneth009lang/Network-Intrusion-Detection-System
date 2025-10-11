@@ -1,6 +1,6 @@
 # app.py
 # Imports
-# Code adapted from Python official (Van Rossum & Drake, 2009)
+# Adapted code from Python official (Van Rossum & Drake, 2009)
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -15,18 +15,18 @@ import zipfile
 from io import BytesIO
 import os
 import time
-# End of adapted code
+# End of Adapted code 
 # Configuration
-# Code adapted from Streamlit (Streamlit, 2023)
+# Adapted code from Streamlit (Streamlit, 2023)
 st.set_page_config(page_title="Intrusion Detection System", layout="wide")
 
-# End of adapted code
+# End of Adapted code 
 
 #Constants
 BATCH_SIZE = 100000
 MAX_ROWS_FOR_EXPLANATION = 50
 #Session State Initialization
-# Code adapted from Streamlit  (Streamlit, 2023)
+# Adapted code from Streamlit  (Streamlit, 2023)
 
 if 'batch_offset' not in st.session_state:
     st.session_state.batch_offset = 0
@@ -43,9 +43,9 @@ if 'df_full' not in st.session_state:
 if 'total_valid_rows' not in st.session_state:
     st.session_state.total_valid_rows = 0
 
-# End of adapted code
+# End of Adapted code 
 # Cache Clearing Function
-# Code adapted from Streamlit  (Streamlit, 2023)
+# Adapted code from Streamlit  (Streamlit, 2023)
 def clear_cache():
     st.cache_resource.clear()
     st.cache_data.clear()
@@ -53,14 +53,14 @@ def clear_cache():
         if key not in ['batch_offset']:
              del st.session_state[key]
     st.session_state.batch_offset = 0
-# End of adapted code
-# Code adapted from Streamlit  (Streamlit, 2023)
+# End of Adapted code 
+# Adapted code from Streamlit  (Streamlit, 2023)
 with st.sidebar:
     st.button("Clear Cache & Reset Data", on_click=clear_cache)
     st.markdown("---")
     st.write("clear cache when you are heving errors")
-# End of adapted code
-# Code adapted from TensorFlow (TensorFlow, 2023) 
+# End of Adapted code 
+# Adapted code from TensorFlow (TensorFlow, 2023) 
 @st.cache_resource(show_spinner="Loading essential model files...")
 def load_resources():
     try:
@@ -81,10 +81,10 @@ def load_resources():
     except TypeError as e:
         st.error(f"Resource Loading Error: {e}")
         st.stop()
-# End of adapted code
+# End of Adapted code 
 model, scaler, label_encoder, selected_features = load_resources()
 # Helper for explainers
-# Code adapted from SHAP (Lundberg & Lee, 2017)
+# Adapted code from SHAP (Lundberg & Lee, 2017)
 def predict_2d_to_3d(x_2d):
     x_arr = np.array(x_2d, dtype=np.float32)
     n_samples = x_arr.shape[0]
@@ -92,9 +92,9 @@ def predict_2d_to_3d(x_2d):
     x_3d = x_arr.reshape(n_samples, n_features, 1)
     preds = model.predict(x_3d, verbose=0)
     return preds
-# End of adapted code
+# End of Adapted code 
 # Explainers Caching
-# Code adapted from SHAP (Lundberg & Lee, 2017)
+# Adapted code from SHAP (Lundberg & Lee, 2017)
 @st.cache_resource(show_spinner="Loading SHAP explainer...")
 def get_shap_explainer(data, labels):
     BACKGROUND_SIZE = 50 
@@ -106,8 +106,8 @@ def get_shap_explainer(data, labels):
         background = data[bg_idx]
     st.info(f"Using {background.shape[0]} samples for SHAP KernelExplainer background.")
     return shap.KernelExplainer(predict_2d_to_3d, background)
-# End of adapted code
-# Code adapted from Ribeiro et al. (2016)
+# End of Adapted code 
+# Adapted code from Ribeiro et al. (2016)
 @st.cache_resource(show_spinner="Loading LIME explainer...")
 def get_lime_explainer(data, feature_names, class_names):
     return LimeTabularExplainer(
@@ -116,17 +116,17 @@ def get_lime_explainer(data, feature_names, class_names):
         class_names=class_names,
         mode='classification'
     )
-# End of adapted code
+# End of Adapted code 
 # Plotting Functions
-# Code adapted from Matplotlib (Hunter, 2007)
+# Adapted code from Matplotlib (Hunter, 2007)
 def fig_to_bytes(fig):
     buf = BytesIO()
     fig.savefig(buf, format='png', bbox_inches='tight')
     buf.seek(0)
     return buf
-# End of adapted code
-# Code adapted from SHAP (Lundberg & Lee, 2017)
-def plot_shap_local(shap_values, feature_names, title="SHAP Local Explanation"):
+# End of Adapted code 
+# Adapted code from SHAP (Lundberg & Lee, 2017)
+def plot_shap_local(shap_values, feature_names, title="Shap Explanation "):
     fig, ax = plt.subplots(figsize=(7, 4))
     feat = np.array(feature_names)
     order = np.argsort(np.abs(shap_values))[::-1]
@@ -136,15 +136,15 @@ def plot_shap_local(shap_values, feature_names, title="SHAP Local Explanation"):
     ax.set_title(title)
     plt.tight_layout()
     return fig
-# End of adapted code
-# Code adapted from Ribeiro et al. (2016)
-def plot_lime_local(lime_exp, title="LIME Local Explanation"):
+# End of Adapted code 
+# Adapted code from Ribeiro et al. (2016)
+def plot_lime_local(lime_exp, title="Lime Explanation "):
     fig = lime_exp.as_pyplot_figure()
     fig.suptitle(title, y=1.02)
     plt.tight_layout()
     return fig
-# End of adapted code
-# Code adapted from SHAP (Lundberg & Lee, 2017)
+# End of Adapted code 
+# Adapted code from SHAP (Lundberg & Lee, 2017)
 def plot_shap_global(shap_explainer, data, feature_names, n_samples=50):
     fig, ax = plt.subplots(figsize=(10, 6))
     subset_n = min(n_samples, data.shape[0])
@@ -163,9 +163,9 @@ def plot_shap_global(shap_explainer, data, feature_names, n_samples=50):
     ax.set_xlabel("Mean |SHAP value|")
     plt.tight_layout()
     return fig
-# End of adapted code
+# End of Adapted code 
 # Data Loading and Preprocessing
-# Code adapted from Pandas (Pandas Team, 2023)
+# Adapted code from Pandas (Pandas Team, 2023)
 @st.cache_data(show_spinner="Reading and cleaning file structure...")
 def load_and_clean_data(uploaded_file):
     try:
@@ -182,7 +182,7 @@ def load_and_clean_data(uploaded_file):
         raise Exception("No valid data found after cleaning.")
     st.session_state.total_valid_rows = df_sel_all.shape[0]
     return df, df_sel_all 
-# End of adapted code
+# End of Adapted code 
 
 # --- THREAT RESPONSE ---
 
@@ -246,15 +246,15 @@ def initiate_critical_alert(attack_df):
 
 
 # Main App UI
-# Code adapted from Streamlit (Streamlit, 2023)
+# Adapted code from Streamlit (Streamlit, 2023)
 st.title("Network Intrusion Detection System")
 st.markdown("Upload a CSV file and process one batch at a time to manage memory.")
 st.markdown("---")
 st.info("Required features: " + ", ".join(selected_features))
 uploaded_file = st.file_uploader("Upload network traffic CSV", type=["csv"])
-# End of adapted code
+# End of Adapted code 
 # Prediction Batch Processing
-# Code adapted from Scikit-learn (Pedregosa et al., 2011) 
+# Adapted code from Scikit-learn (Pedregosa et al., 2011) 
 if uploaded_file is None:
     st.info("Please upload a CSV file to begin.")
     st.session_state.batch_offset = 0
@@ -291,9 +291,9 @@ st.session_state.current_scaled_data = scaled_data
 st.session_state.current_predictions = predictions
 st.session_state.current_results_df = results_df
 st.session_state.batch_offset = end_idx
-# End of adapted code
+# End of Adapted code 
 # Results Display
-# Code adapted from Streamlit (Streamlit, 2023)
+# Adapted code from Streamlit (Streamlit, 2023)
 st.subheader(" Batch Results and Response")
 
 # Filter for detected intrusions
@@ -315,9 +315,9 @@ if not attack_results.empty:
 
 st.dataframe(results_df.head(20))
 st.write(f"Showing {len(results_df)} rows in this batch.")
-# End of adapted code
+# End of Adapted code 
 # SHAP and LIME Explanations
-# Code adapted from SHAP (Lundberg & Lee, 2017) and Ribeiro et al. (2016)
+# Adapted code from SHAP (Lundberg & Lee, 2017) and Ribeiro et al. (2016)
 if len(results_df) > 0:
     st.subheader(" Model Explanations")
     shap_explainer = get_shap_explainer(st.session_state.current_scaled_data, pred_labels)
@@ -334,18 +334,18 @@ if len(results_df) > 0:
         predict_2d_to_3d,
         num_features=10
     )
-    st.write("SHAP Local Explanation")
+    st.write("Shap Explanation ")
     fig_shap = plot_shap_local(shap_values[0][0], selected_features)
     st.pyplot(fig_shap)
-    st.write(" LIME Local Explanation")
+    st.write(" Lime Explanation ")
     fig_lime = plot_lime_local(lime_exp)
     st.pyplot(fig_lime)
     st.write(" SHAP Global Explanation")
     fig_global = plot_shap_global(shap_explainer, st.session_state.current_scaled_data, selected_features)
     st.pyplot(fig_global)
-# End of adapted code
+# End of Adapted code 
 # Export Results
-# Code adapted from Pandas (Pandas Team, 2023) and Python zipfile module (Python Software Foundation, 2023)
+# Adapted code from Pandas (Pandas Team, 2023) and Python zipfile module (Python Software Foundation, 2023)
 st.subheader(" Export Batch Results")
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 csv_filename = f"batch_results_{timestamp}.csv"
@@ -364,4 +364,4 @@ st.download_button(
     file_name=zip_filename,
     mime="application/zip"
 )
-# End of adapted code
+# End of Adapted code 
