@@ -71,7 +71,7 @@ def load_resources():
         with open('selected_features.txt', 'r') as f:
             selected_features = [line.strip() for line in f.readlines()]
         if not hasattr(label_encoder, 'inverse_transform'):
-            raise TypeError("Loaded label_encoder object does not have the 'inverse_transform' method.")
+            raise TypeError("Loaded label_encoder object does not have the inverse_transform method.")
             
         return model, scaler, label_encoder, selected_features
     except FileNotFoundError as e:
@@ -184,7 +184,7 @@ def load_and_clean_data(uploaded_file):
 # End of adapted code
 # Main App UI
 # Adapted Code  from Streamlit documentation (Streamlit, 2023)
-st.title("Network Intrusion Detection System — Single-Batch Analysis")
+st.title("Network Intrusion Detection System")
 st.markdown("Upload a CSV file and process one batch at a time to manage memory.")
 st.markdown("---")
 st.info("Required features: " + ", ".join(selected_features))
