@@ -381,3 +381,20 @@ st.download_button(
     mime="application/zip"
 )
 # End of Adapted code
+# REFERENCE
+
+# Hunter, J. D. (2007). Matplotlib: A 2D graphics environment. Computing in Science & Engineering, 9(3), 90–95. https://doi.org/10.1109/MCSE.2007.55
+
+# Lundberg, S. M., & Lee, S.-I. (2017). A unified approach to interpreting model predictions. Advances in Neural Information Processing Systems, 30, 4765–4774.
+
+# Pandas Team. (2023). Pandas documentation. https://pandas.pydata.org/
+
+# Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., ... & Duchesnay, É. (2011). Scikit-learn: Machine learning in Python. Journal of Machine Learning Research, 12, 2825–2830.
+
+# Ribeiro, M. T., Singh, S., & Guestrin, C. (2016). “Why should I trust you?” Explaining the predictions of any classifier. Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (pp. 1135–1144). https://doi.org/10.1145/2939672.2939778
+
+# Streamlit Team. (2023). Streamlit documentation. Streamlit Inc. https://docs.streamlit.io/
+
+# TensorFlow Team. (2023). TensorFlow: An end-to-end open source platform for machine learning. Google Research. https://www.tensorflow.org/
+
+# Van Rossum, G., & Drake, F. L. (2009). Python 3 reference manual. Python Software Foundation.
